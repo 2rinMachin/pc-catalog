@@ -1,0 +1,89 @@
+service: "${env:PROJECT_NAME}-products"
+
+provider:
+  name: "aws"
+  runtime: "python3.13"
+  memorySize: 512
+  timeout: 20
+  iam:
+    role: "arn:aws:iam::${env:AWS_USER_ID}:role/LabRole"
+  environment:
+    PROJECT_NAME: "${env:PROJECT_NAME}"
+    STAGE: "${env:STAGE}"
+
+custom:
+  pythonRequirements: {}
+
+functions:
+  get_status:
+    handler: "functions/get_status.handler"
+    events:
+      - http:
+          path: "/"
+          method: "get"
+          cors: true
+
+  get_products:
+    handler: "functions/get_products.handler"
+    events:
+      - http:
+          path: "/{tenant_id}/products"
+          method: "get"
+          cors: true
+          authorizer:
+            arn: "${env:AWS_AUTHENTICATE_USER_ARN}"
+            type: "request"
+            identitySource: "method.request.header.Authorization"
+            resultTtlInSeconds: 0
+
+  get_product:
+    handler: "functions/get_product.handler"
+    events:
+      - http:
+          path: "/{tenant_id}/products/{product_id}"
+          method: "get"
+          cors: true
+          authorizer:
+            arn: "${env:AWS_AUTHENTICATE_USER_ARN}"
+            type: "request"
+            identitySource: "method.request.header.Authorization"
+            resultTtlInSeconds: 0
+
+  create_product:
+    handler: "functions/create_product.handler"
+    events:
+      - http:
+          path: "/{tenant_id}/products"
+          method: "post"
+          cors: true
+          authorizer:
+            arn: "${env:AWS_AUTHENTICATE_USER_ARN}"
+            type: "request"
+            identitySource: "method.request.header.Authorization"
+            resultTtlInSeconds: 0
+
+  update_product:
+    handler: "functions/update_product.handler"
+    events:
+      - http:
+          path: "/{tenant_id}/products/{product_id}"
+          method: "put"
+          cors: true
+          authorizer:
+            arn: "${env:AWS_AUTHENTICATE_USER_ARN}"
+            type: "request"
+            identitySource: "method.request.header.Authorization"
+            resultTtlInSeconds: 0
+
+  delete_product:
+    handler: "functions/delete_product.handler"
+    events:
+      - http:
+          path: "/{tenant_id}/products/{product_id}"
+          method: "delete"
+          cors: true
+          authorizer:
+            arn: "${env:AWS_AUTHENTICATE_USER_ARN}"
+            type: "request"
+            identitySource: "method.request.header.Authorization"
+            resultTtlInSeconds: 0
