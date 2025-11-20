@@ -1,4 +1,4 @@
-service: "${env:PROJECT_NAME}-products"
+service: "${env:PROJECT_NAME}-catalog"
 
 provider:
   name: "aws"
