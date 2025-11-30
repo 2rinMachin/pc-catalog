@@ -53,5 +53,5 @@ def json_default(obj: dict):
     raise TypeError
 
 
-def to_json(obj: dict):
+def to_json(obj: Any) -> str:
     return json.dumps(obj, default=json_default)
